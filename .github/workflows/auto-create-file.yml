@@ -1,0 +1,28 @@
+name: Auto Create File
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 매일 자정 실행 (UTC 기준)
+  workflow_dispatch:  # 필요하면 수동 실행 가능
+
+jobs:
+  create-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 저장소 클론
+        uses: actions/checkout@v3
+
+      - name: 새로운 파일 생성
+        run: echo "자동 생성된 파일 - $(date)" > "auto_file_$(date +%Y%m%d%H%M%S).txt"
+
+      - name: Git 설정
+        run: |
+          git config --global user.name "LEE-cw-51"
+          git config --global user.email "chanwoo51@naver.com"
+
+      - name: 변경 사항 커밋 & 푸시
+        run: |
+          git add .
+          git commit -m "Auto-created file: $(date)" || echo "No changes to commit"
+          git push origin main
